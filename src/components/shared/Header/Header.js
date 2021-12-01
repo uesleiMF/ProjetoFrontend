@@ -1,5 +1,8 @@
 import React from 'react';
+import Navbar from 'react-bootstrap/Navbar'
 import { Link } from 'react-router-dom';
+
+
 const Header = () => {
   return (
     <nav className="navbar  navbar-expand-lg navbar-light bg-success w-100">
@@ -15,12 +18,12 @@ const Header = () => {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link active" to="/">
-                Home
+                
               </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/Inicio">
-                Cadastro
+               
               </Link>
               </li>
           </ul>
@@ -35,12 +38,12 @@ const Header = () => {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link active" to="/">
-                Home
+                
               </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/cadastro">
-                Cadastro
+                
               </Link>
               </li>
           </ul>
@@ -53,12 +56,12 @@ const Header = () => {
           <ul className="navbar-nav me-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link active" to="/">
-                Home
+                
               </Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" to="/edit">
-                Cadastro
+                
               </Link>
             </li>
           </ul>
@@ -69,3 +72,5 @@ const Header = () => {
 }
 
 export default Header
+
+

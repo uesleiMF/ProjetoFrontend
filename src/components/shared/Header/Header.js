@@ -5,44 +5,67 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <Navbar bg="light" expand="lg">
-    <Container fluid>
-      <Navbar.Brand href="#">Navbar scroll</Navbar.Brand>
-      <Navbar.Toggle aria-controls="navbarScroll" />
-      <Navbar.Collapse id="navbarScroll">
+    <nav className="navbar  navbar-expand-lg navbar-light bg-success w-100">
+    
+      <div className="container">
         
-          <Link href="#action1"  className="navbar-brand" to="/Inicio">
+        <Link className="navbar-brand" to="/Inicio">
           Pagina Inicial
-         </Link>
+        </Link>
+        <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+              <Link className="nav-link active" to="/">
+                
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/Inicio">
+               
+              </Link>
+              </li>
+          </ul>
+        </div>
 
-          <Nav.Link href="#action2">Link</Nav.Link>
-          <NavDropdown title="Link" id="navbarScrollingDropdown">
-            <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-            <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
-            <NavDropdown.Divider />
-            <NavDropdown.Item href="#action5">
-              Something else here
-            </NavDropdown.Item>
-          </NavDropdown>
-          <Nav.Link href="#" disabled>
-            Link
-          </Nav.Link>
-        
-        <Form className="d-flex">
-          <FormControl
-            type="search"
-            placeholder="Search"
-            className="me-2"
-            aria-label="Search"
-          />
-          <Button variant="outline-success">Search</Button>
-        </Form>
-      </Navbar.Collapse>
-    </Container>
-  </Navbar>
 
-       
-  
+
+        <Link className="navbar-brand" to="/">
+          Produtos Cadastrados
+        </Link>
+        <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+              <Link className="nav-link active" to="/">
+                
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/cadastro">
+                
+              </Link>
+              </li>
+          </ul>
+        </div>
+
+              <Link className="navbar-brand" to="/cadastro">
+          Cadastrar Produtos
+        </Link>
+        <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
+          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+            <li className="nav-item">
+              <Link className="nav-link active" to="/">
+                
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link className="nav-link" to="/edit">
+                
+              </Link>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
   )
 }
 

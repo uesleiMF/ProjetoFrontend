@@ -5,72 +5,43 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <nav className="navbar  navbar-expand-lg navbar-light bg-success w-100">
     
-      <div className="container">
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <Link className="navbar-brand" to="/Inicio">
-          Pagina Inicial
-        </Link>
-        <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link active" to="/">
-                
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/Inicio">
-               
-              </Link>
-              </li>
-          </ul>
-        </div>
-
-
-
-        <Link className="navbar-brand" to="/">
-          Produtos Cadastrados
-        </Link>
-        <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link active" to="/">
-                
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/cadastro">
-                
-              </Link>
-              </li>
-          </ul>
-        </div>
-
-              <Link className="navbar-brand" to="/cadastro">
-          Cadastrar Produtos
-        </Link>
-        <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link active" to="/">
-                
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link className="nav-link" to="/edit">
-                
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-  )
+<Navbar bg="light" expand="lg">
+  <Container fluid>
+    <Navbar.Brand href="#">Navbar scroll</Navbar.Brand>
+    <Navbar.Toggle aria-controls="navbarScroll" />
+    <Navbar.Collapse id="navbarScroll">
+      <Nav
+        className="me-auto my-2 my-lg-0"
+        style={{ maxHeight: '100px' }}
+        navbarScroll
+      >
+        <Nav.Link href="/Inicio">Pagina Inicial</Nav.Link>
+        <Nav.Link href="/">Produtos Cadastrados</Nav.Link>
+        <Nav.Link href="/cadastro">Cadastro</Nav.Link>
+        
+        <NavDropdown title="/cadastro" id="navbarScrollingDropdown">
+          <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
+          <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
+          <NavDropdown.Divider />
+         
+        </NavDropdown>
+     
+      </Nav>
+      <Form className="d-flex">
+        <FormControl
+          type="search"
+          placeholder="Search"
+          className="me-2"
+          aria-label="Search"
+        />
+       
+      </Form>
+    </Navbar.Collapse>
+  </Container>
+</Navbar>
+ )
 }
 
+
 export default Header
-
-

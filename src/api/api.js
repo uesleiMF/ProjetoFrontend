@@ -1,5 +1,5 @@
 const Api = {
-  apiUrl: 'https://produt-list.herokuapp.com/produtos',
+  apiUrl: 'https://projeto-backend-fg78.onrender.com/produtos',
   fetchGetAll: () => fetch(Api.apiUrl),
   fetchGetById: (id) => fetch(`${Api.apiUrl}/${id}`),
   fetchPost: (data) => {

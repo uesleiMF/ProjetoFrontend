@@ -14,7 +14,7 @@ const Inicio = () => {
      
       <div class="container bg-info">
     <div class="nome text-center">
-    <h1>**PRODUTOS**</h1>
+    <h2>**PRODUTOS**</h2>
 </div>
      
     <div class="p-1 mb-2 bg-info text-black">
@@ -26,7 +26,7 @@ const Inicio = () => {
       alt="First slide"
     />
     <Carousel.Caption>
-      <h2><justify> KIT CERCA ELETRICA</justify></h2>
+      <h3><justify> KIT CERCA ELETRICA</justify></h3>
       
     </Carousel.Caption>
   </Carousel.Item>
@@ -38,7 +38,7 @@ const Inicio = () => {
     />
 
     <Carousel.Caption>
-    <h2><justify> KIT CAMERAS</justify></h2>
+    <h3><justify> KIT CAMERAS</justify></h3>
       </Carousel.Caption>
   </Carousel.Item>
   <Carousel.Item>
@@ -49,7 +49,7 @@ const Inicio = () => {
     />
 
     <Carousel.Caption>
-    <h2><justify> KIT ALARME</justify></h2>
+    <h3><justify> KIT ALARME</justify></h3>
        </Carousel.Caption>
   </Carousel.Item>
 </Carousel>
@@ -67,7 +67,7 @@ const Inicio = () => {
      
       <div class="container bg-info">
     <div class="nome text-center">
-    <h1>**PRODUTOS**</h1>
+    <h2>**PRODUTOS**</h2>
 </div>
 <div class="p-1 mb-2 bg-info text-black">
 <Carousel fade>
@@ -79,7 +79,7 @@ const Inicio = () => {
     />
 
     <Carousel.Caption>
-    <h2><justify> SISTEMA</justify></h2>
+    <h3><justify> SISTEMA</justify></h3>
      </Carousel.Caption>
   </Carousel.Item>
   <Carousel.Item>
@@ -90,7 +90,7 @@ const Inicio = () => {
     />
 
     <Carousel.Caption>
-    <h2><justify>SISTEMA</justify></h2>
+    <h3><justify>SISTEMA</justify></h3>
      
    </Carousel.Caption>
   </Carousel.Item>
@@ -102,7 +102,7 @@ const Inicio = () => {
     />
 
     <Carousel.Caption>
-    <h2><justify> SPEED DOME </justify></h2>
+    <h3><justify> SPEED DOME </justify></h3>
     
    </Carousel.Caption>
   </Carousel.Item>

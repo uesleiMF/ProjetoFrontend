@@ -17,14 +17,14 @@ export default function Navbar() {
   <li>
          <TbDeviceCctv />
          
-         <Link to="/inicio">Pagina Inicial</Link>
+         <Link to="/inicio">Inicio</Link>
             
         </li>
        
 
     <li>
       <TbBrandShopee />
-      <Link to="/"> Produtos Cadastrados</Link>
+      <Link to="/">Lista-Produtos</Link>
    </li>
        
      <li>

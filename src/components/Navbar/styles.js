@@ -40,15 +40,15 @@ export const List = styled.ul`
   list-style: none;
   margin-bottom: 0px;
   background:transparent;
-  margin-left:-20px;
+  margin-left:-60px;
    
   
   li {
    
     color:  white;
   
-    padding: 0 0.4rem;
-    font-size: 1.8rem;
+    padding: 0 0.1rem;
+    font-size: 1.2rem;
     display: fixed;
     align-items: center;
 
@@ -57,9 +57,9 @@ export const List = styled.ul`
     a {
       text-decoration: none;
       color:  #000;
-      font-weight: 800;
+      font-weight: 700;
       padding: 0 1.0rem;
-      font-size: 1.2rem;
+      font-size: 1.0rem;
       display: flex;
       align-items: center;
      

@@ -13,7 +13,7 @@ export const Container = styled.div`
 
 export const Social = styled.div`
   a {
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     color: #fff;
     text-decoration: none;
   }

@@ -1,13 +1,13 @@
 import './App.css';
 import Navbar from "./components/Navbar/Navbar";
-import Home from './pages/Home/Home';
+
 import Cadastro from './pages/Cadastro/Cadastro';
 import { Routes, Route } from 'react-router-dom';
 import View from './pages/View/View';
 import Edit from './pages/Edit/Edit';
 import Inicio from './pages/Inicio/Inicio';
 import Footer from "./components/Footer/Footer";
-
+import ListaProdutos from "./pages/Home/ListaProdutos";
 function App() {
   return (
     
@@ -15,12 +15,12 @@ function App() {
        <Navbar/>
       
       <Routes>
-        <Route path="/" element={<Home/>}/>
+       
         <Route path="/cadastro" element={<Cadastro/>}/>
         <Route path="/view/:id" element={<View/>}/>
         <Route path="/edit/:id" element={<Edit/>}/>
         <Route path="/Inicio" element={<Inicio/>}/>
-       
+        <Route path="/produtos" element={<ListaProdutos />} />
       </Routes>
 <Footer/>
       
@@ -30,6 +30,5 @@ function App() {
 
   );
 }
-
 
 export default App;

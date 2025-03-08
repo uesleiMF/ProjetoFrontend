@@ -1,126 +1,122 @@
-import React from 'react'
-import Api from '../../api/api';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
-const Cadastro = () => {
-  const navigate = useNavigate();
-  
-  const handleSubmit = async (evento) => {
-    evento.preventDefault();
-    // target = quem disparou o evento
-    console.log(evento.target);
-    const titulo = evento.target.titulo.value;
-    const descricao = evento.target.descricao.value;
-    const prioridade= evento.target.prioridade.value;
-    const status= evento.target.status.value;
-    const capa = evento.target.capa.value;
-    const data= evento.target.data.value;
-    const prazo = evento.target.prazo.value;
+const App = () => {
+  const [produtos, setProdutos] = useState([]);
+  const [imagem, setImagem] = useState(null);
+  const [titulo, setTitulo] = useState('');
+  const [descricao, setDescricao] = useState('');
+  const [prioridade, setPrioridade] = useState('');
+  const [status, setStatus] = useState('');
+  const [dataValidade, setDataValidade] = useState('');
+  const [erro, setErro] = useState(null);
 
-    const produto = {
-      titulo,
-      descricao,
-      prioridade,
-      status,
-      capa,
-      data,
-      prazo
-    }
+  // Função para pegar os produtos
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/produtos')
+      .then((response) => {
+        setProdutos(response.data); // Armazena todos os produtos no estado
+      })
+      .catch((error) => {
+        setErro('Erro ao carregar os produtos.');
+        console.error(error);
+      });
+  }, []);
 
-    const request = await Api.fetchPost(produto);
-    if(request.status === 500) {
-      alert('ERRO NO SERVIDOR')
-    }
-    const result = await request.json();
-    if(result.error) {
-      console.log(result.error);
-    }else {
-      alert(result.message);
-      navigate('/');
-    }
-  }
+  // Função para tratar o upload de produtos
+  const handleUploadProduto = (e) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    formData.append('file', imagem);
+    formData.append('titulo', titulo);
+    formData.append('descricao', descricao);
+    formData.append('prioridade', prioridade);
+    formData.append('status', status);
+    formData.append('dataValidade', dataValidade);
+
+    axios
+      .post('http://localhost:3001/upload', formData)
+      .then((response) => {
+        alert('Produto cadastrado com sucesso!');
+        // Atualiza a lista de produtos após o cadastro
+        setProdutos((prevProdutos) => [...prevProdutos, response.data.produto]);
+      })
+      .catch((error) => {
+        setErro('Erro ao cadastrar produto.');
+        console.error(error);
+      });
+  };
 
   return (
-   
+    <div>
+      <h1>Catálogo de Produtos</h1>
 
-    <div className="container">
-      <div className="card mt-3 bg-warning">
-        <div className="card-title">
-          <div className="row">
-            <div className="col">
-              
-              <h3 className="mx-3 my-3 text-center">Cadastro de Produtos</h3>
-            </div>
-          </div>
-        </div>
-        <div className="card-body">
-          <form onSubmit={handleSubmit}>
-            <div className="row mb-3">
-              <div className="col-5">
-                <div className="form-group">
-                  <label htmlFor="titulo">Titulo:</label>
-                  <input id="titulo" className="form-control" type="text" placeholder="Nome do Produto" name="titulo"/>
-                </div>
-              </div>
-              <div className="col-5">
-                <div className="form-group">
-                  <label htmlFor="descricao">Descrição:</label>
-                  <input id="descricao" type="text" className="form-control" placeholder="Descrição do Produto" name="descricao"/>
-                </div>
-              </div>
-              <div className="col-5">
-                <div className="form-group">
-                  <label htmlFor="prioridade">Prioridade :</label>
-                  <input id="prioridade" type="text" className="form-control" placeholder="(Ruim) (Bom) (Otimo)" name="prioridade"/>
-                </div>
-              </div>
-            <div className="col-5">
-                <div className="form-group">
-                  <label htmlFor="status">Status :</label>
-                  <input id="status" type="text" className="form-control" placeholder="(Tipo1) (Tipo2) (Fora do Tipo)" name="status"/>
-                </div>
-              </div>
-            
-              <div className="col-5">
-                <div className="form-group">
-                  <label htmlFor="capa">Capa:</label>
-                  <input id="capa" type="text" className="form-control" placeholder="URL da capa do album" name="capa"/>
-                </div>
-              </div>
-              <div className="col-5">
-                <div className="form-group">
-                  <label htmlFor="prazo">Data de Validade:</label>
-                  <input id="prazo" type="date" className="form-control" placeholder="Data de Vencimento" name="prazo"/>
-                </div>
-              </div>
-              <div className="col-5">
-                <div className="form-group">
-                  <label htmlFor="data">Data de Fabricação:</label>
-                  <input id="data" type="date" className="form-control"  placeholder="Data Fabricação" name="data"/>
-                </div>
-              </div>
-            
-              
-              <div className="col-5 d-flex align-items-end justify-content-around">
-                <button type="submit" className="btn btn-success">Enviar</button>
-                <button type="reset" className="btn btn-danger">Limpar</button>
-              </div>
-            </div>
-                    
-          
-          </form>
-        </div>
+      {erro && <p>{erro}</p>}
+
+      <h2>Cadastrar Produto</h2>
+      <form onSubmit={handleUploadProduto}>
+        <input
+          type="text"
+          placeholder="Título"
+          value={titulo}
+          onChange={(e) => setTitulo(e.target.value)}
+          required
+        />
+        <textarea
+          placeholder="Descrição"
+          value={descricao}
+          onChange={(e) => setDescricao(e.target.value)}
+          required
+        />
+        <input
+          type="text"
+          placeholder="Prioridade"
+          value={prioridade}
+          onChange={(e) => setPrioridade(e.target.value)}
+        />
+        <input
+          type="text"
+          placeholder="Status"
+          value={status}
+          onChange={(e) => setStatus(e.target.value)}
+        />
+        <input
+          type="date"
+          value={dataValidade}
+          onChange={(e) => setDataValidade(e.target.value)}
+        />
+        <input
+          type="file"
+          onChange={(e) => setImagem(e.target.files[0])}
+          accept="image/*"
+          required
+        />
+        <button type="submit">Cadastrar Produto</button>
+      </form>
+
+      <h2>Lista de Produtos</h2>
+      <div>
+        {produtos.length === 0 ? (
+          <p>Nenhum produto cadastrado.</p>
+        ) : (
+          <ul>
+            {produtos.map((produto) => (
+              <li key={produto._id}>
+                <h3>{produto.titulo}</h3>
+                <p>{produto.descricao}</p>
+                <img src={`http://localhost:3001${produto.imagemUrl}`} alt={produto.titulo} />
+                <p>Prioridade: {produto.prioridade}</p>
+                <p>Status: {produto.status}</p>
+                <p>Data de validade: {produto.dataValidade}</p>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
-      </div>
-    
+    </div>
+  );
+};
 
-
-
-
-
-  )
-}
-
-
-
-export default Cadastro
+export default App;

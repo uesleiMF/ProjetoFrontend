@@ -13,16 +13,31 @@ const App = () => {
 
   // Função para pegar os produtos
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/produtos')
-      .then((response) => {
-        setProdutos(response.data); // Armazena todos os produtos no estado
-      })
-      .catch((error) => {
-        setErro('Erro ao carregar os produtos.');
-        console.error(error);
-      });
+    // Verificar se há dados salvos no localStorage
+    const savedProdutos = localStorage.getItem('produtos');
+    if (savedProdutos) {
+      setProdutos(JSON.parse(savedProdutos)); // Carregar os produtos salvos
+    } else {
+      // Se não houver, pegar do backend
+      axios
+        .get('http://localhost:3001/produtos')
+        .then((response) => {
+          setProdutos(response.data); // Armazena todos os produtos no estado
+          localStorage.setItem('produtos', JSON.stringify(response.data)); // Salva no localStorage
+        })
+        .catch((error) => {
+          setErro('Erro ao carregar os produtos.');
+          console.error(error);
+        });
+    }
   }, []);
+
+  // Atualizar o localStorage sempre que os produtos mudarem
+  useEffect(() => {
+    if (produtos.length > 0) {
+      localStorage.setItem('produtos', JSON.stringify(produtos));
+    }
+  }, [produtos]);
 
   // Função para tratar o upload de produtos
   const handleUploadProduto = (e) => {
@@ -40,8 +55,12 @@ const App = () => {
       .post('http://localhost:3001/upload', formData)
       .then((response) => {
         alert('Produto cadastrado com sucesso!');
-        // Atualiza a lista de produtos após o cadastro
-        setProdutos((prevProdutos) => [...prevProdutos, response.data.produto]);
+        const novoProduto = response.data.produto;
+        setProdutos((prevProdutos) => {
+          const novosProdutos = [...prevProdutos, novoProduto];
+          localStorage.setItem('produtos', JSON.stringify(novosProdutos)); // Atualizar o localStorage
+          return novosProdutos;
+        });
       })
       .catch((error) => {
         setErro('Erro ao cadastrar produto.');
@@ -106,7 +125,10 @@ const App = () => {
               <li key={produto._id}>
                 <h3>{produto.titulo}</h3>
                 <p>{produto.descricao}</p>
-                <img src={`http://localhost:3001${produto.imagemUrl}`} alt={produto.titulo} />
+                <img
+                  src={`http://localhost:3001${produto.imagemUrl}`}
+                  alt={produto.titulo}
+                />
                 <p>Prioridade: {produto.prioridade}</p>
                 <p>Status: {produto.status}</p>
                 <p>Data de validade: {produto.dataValidade}</p>

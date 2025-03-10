@@ -9,7 +9,7 @@ const View = () => {
   useEffect(() => {
     const fetchProduto = async () => {
       try {
-        const response = await axios.get(`http://localhost:3001/produtos/${id}`);
+        const response = await axios.get(`https://projeto-backend-fg78.onrender.com/produtos/${id}`);
         setProduto(response.data);
       } catch (error) {
         console.error("Erro ao buscar produto:", error);
@@ -29,7 +29,7 @@ const View = () => {
       <p>Status: {produto.status}</p>
       <p>Data de Validade: {produto.dataValidade}</p>
       {produto.imagemUrl && (
-        <img src={`http://localhost:3001${produto.imagemUrl}`} alt={produto.titulo} width="200" />
+        <img src={`https://projeto-backend-fg78.onrender.com${produto.imagemUrl}`} alt={produto.titulo} width="200" />
       )}
     </div>
   );

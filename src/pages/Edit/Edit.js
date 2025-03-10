@@ -2,6 +2,32 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Api from "../../api/api";
 
+// Componente de input reutilizável
+const InputField = ({ id, label, value, onChange, type = 'text', placeholder, name }) => (
+  <div className="form-group">
+    <label htmlFor={id}>{label}</label>
+    <input
+      id={id}
+      type={type}
+      className="form-control"
+      placeholder={placeholder}
+      value={value}
+      onChange={onChange}
+      name={name}
+    />
+  </div>
+);
+
+// Componente de mensagem de erro
+const ErrorMessage = ({ message }) => {
+  if (!message) return null;
+  return (
+    <div className="alert alert-danger">
+      {message}
+    </div>
+  );
+};
+
 const Edit = () => {
   const navigate = useNavigate();
   const [produto, setProduto] = useState({
@@ -15,6 +41,7 @@ const Edit = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [formErrors, setFormErrors] = useState({});
 
   const { id } = useParams();
 
@@ -41,12 +68,23 @@ const Edit = () => {
     setProduto(produtoEdit);
   };
 
+  const validateForm = () => {
+    const errors = {};
+    if (!produto.titulo) errors.titulo = "O título é obrigatório";
+    if (!produto.descricao) errors.descricao = "A descrição é obrigatória";
+    if (!produto.prioridade) errors.prioridade = "A prioridade é obrigatória";
+    if (!produto.prazo) errors.prazo = "A validade do produto é obrigatória";
+    if (!produto.data) errors.data = "A data de cadastro é obrigatória";
+
+    return errors;
+  };
+
   const handleSubmit = async (evento) => {
     evento.preventDefault();
 
-    // Validação simples
-    if (!produto.titulo || !produto.descricao || !produto.prioridade || !produto.prazo || !produto.data) {
-      alert("Por favor, preencha todos os campos obrigatórios!");
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
       return;
     }
 
@@ -54,7 +92,7 @@ const Edit = () => {
       const request = await Api.fetchPut(produto, id);
       const data = await request.json();
       if (data.error) {
-        alert(data.error); // Exibe o erro específico da API
+        alert(data.error);
         return;
       }
       alert(data.message);
@@ -65,7 +103,13 @@ const Edit = () => {
     }
   };
 
-  if (loading) return <div>Carregando...</div>;
+  if (loading) return (
+    <div className="d-flex justify-content-center my-5">
+      <div className="spinner-border" role="status">
+        <span className="sr-only">Carregando...</span>
+      </div>
+    </div>
+  );
 
   if (error) return <div>Erro: {error}</div>;
 
@@ -80,93 +124,72 @@ const Edit = () => {
           </div>
         </div>
         <div className="card-body">
+          {error && <ErrorMessage message={error} />}
           <form onSubmit={handleSubmit}>
             <div className="row mb-4">
               <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="titulo">Titulo:</label>
-                  <input
-                    id="titulo"
-                    className="form-control"
-                    type="text"
-                    placeholder="Nome do Produto"
-                    value={produto.titulo}
-                    onChange={handleFieldsChange}
-                    name="titulo"
-                  />
-                </div>
+                <InputField
+                  id="titulo"
+                  label="Titulo"
+                  value={produto.titulo}
+                  onChange={handleFieldsChange}
+                  name="titulo"
+                />
+                {formErrors.titulo && <div className="text-danger">{formErrors.titulo}</div>}
               </div>
               <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="descricao">Descrição do produto:</label>
-                  <input
-                    id="descricao"
-                    type="text"
-                    className="form-control"
-                    placeholder="Descrição do Produto"
-                    value={produto.descricao}
-                    onChange={handleFieldsChange}
-                    name="descricao"
-                  />
-                </div>
+                <InputField
+                  id="descricao"
+                  label="Descrição do produto"
+                  value={produto.descricao}
+                  onChange={handleFieldsChange}
+                  name="descricao"
+                />
+                {formErrors.descricao && <div className="text-danger">{formErrors.descricao}</div>}
               </div>
               <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="prioridade">Prioridade do Produto:</label>
-                  <input
-                    id="prioridade"
-                    type="text"
-                    className="form-control"
-                    value={produto.prioridade}
-                    onChange={handleFieldsChange}
-                    placeholder="ruim bom otimo"
-                    name="prioridade"
-                  />
-                </div>
+                <InputField
+                  id="prioridade"
+                  label="Prioridade do Produto"
+                  value={produto.prioridade}
+                  onChange={handleFieldsChange}
+                  name="prioridade"
+                  placeholder="ruim, bom, ótimo"
+                />
+                {formErrors.prioridade && <div className="text-danger">{formErrors.prioridade}</div>}
               </div>
             </div>
             <div className="row">
               <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="capa">Link do Produto:</label>
-                  <input
-                    id="capa"
-                    type="text"
-                    value={produto.capa}
-                    onChange={handleFieldsChange}
-                    className="form-control"
-                    placeholder="URL da Produto"
-                    name="capa"
-                  />
-                </div>
+                <InputField
+                  id="capa"
+                  label="Link do Produto"
+                  value={produto.capa}
+                  onChange={handleFieldsChange}
+                  name="capa"
+                />
               </div>
               <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="prazo">Validade do produto:</label>
-                  <input
-                    id="prazo"
-                    type="date"
-                    value={produto.prazo}
-                    onChange={handleFieldsChange}
-                    className="form-control"
-                    placeholder="Validade"
-                    name="prazo"
-                  />
-                </div>
+                <InputField
+                  id="prazo"
+                  label="Validade do produto"
+                  value={produto.prazo}
+                  onChange={handleFieldsChange}
+                  name="prazo"
+                  type="date"
+                />
+                {formErrors.prazo && <div className="text-danger">{formErrors.prazo}</div>}
               </div>
               <div className="col-4">
-                <div className="form-group">
-                  <label htmlFor="data">Data de Cadastro:</label>
-                  <input
-                    id="data"
-                    type="date"
-                    value={produto.data}
-                    onChange={handleFieldsChange}
-                    className="form-control"
-                    placeholder="Data de Cadastro"
-                    name="data"
-                  />
-                </div>
+                <InputField
+                  id="data"
+                  label="Data de Cadastro"
+                  value={produto.data}
+                  onChange={handleFieldsChange}
+                  name="data"
+                  type="date"
+                />
+                {formErrors.data && <div className="text-danger">{formErrors.data}</div>}
               </div>
               <div className="col-4 d-flex align-items-end justify-content-around">
                 <button type="submit" className="btn btn-success">

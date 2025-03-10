@@ -20,7 +20,7 @@ const App = () => {
     } else {
       // Se não houver, pegar do backend
       axios
-        .get('http://localhost:3001/produtos')
+        .get('https://projeto-backend-fg78.onrender.com/produtos')
         .then((response) => {
           setProdutos(response.data); // Armazena todos os produtos no estado
           localStorage.setItem('produtos', JSON.stringify(response.data)); // Salva no localStorage
@@ -52,7 +52,7 @@ const App = () => {
     formData.append('dataValidade', dataValidade);
 
     axios
-      .post('http://localhost:3001/upload', formData)
+      .post('https://projeto-backend-fg78.onrender.com/upload', formData)
       .then((response) => {
         alert('Produto cadastrado com sucesso!');
         const novoProduto = response.data.produto;
@@ -126,7 +126,7 @@ const App = () => {
                 <h3>{produto.titulo}</h3>
                 <p>{produto.descricao}</p>
                 <img
-                  src={`http://localhost:3001${produto.imagemUrl}`}
+                  src={`https://projeto-backend-fg78.onrender.com${produto.imagemUrl}`}
                   alt={produto.titulo}
                 />
                 <p>Prioridade: {produto.prioridade}</p>

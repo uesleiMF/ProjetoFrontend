@@ -1,18 +1,21 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import { BrowserRouter } from 'react-router-dom';
+import { Switch, Redirect, Route } from 'react-router';
+import { BrowserRouter, Link } from 'react-router-dom';
 
-// react-router-dom - framework que cuida das rotas.
-// renderiza o nosso componente principal dentro da div root.
-// BrowserRouter - necessario para fazer as rotas funcionarem <Router></Router>
+import Login from './Login';
+import Register from './Register';
+import Dashboard from './Dashboard';
+import './Login.css';
+
 ReactDOM.render(
-  <React.StrictMode>
     <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById('root')
+        <Switch>
+            <Route exact path='/' component={Login} />
+            <Route exact path='/register' component={Register} />
+            <Route path='/dashboard' component={Dashboard} />
+            {/* <Route component={NotFound}/> */}
+        </Switch>
+    </BrowserRouter>,
+    document.getElementById('root')
 );

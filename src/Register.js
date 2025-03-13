@@ -25,7 +25,7 @@ const Register = ({ history }) => {
       return;
     }
 
-    axios.post('http://localhost:2000/register', {
+    axios.post('https://projeto-backend-fg78.onrender.com/register', {
       username,
       password,
     }).then((res) => {

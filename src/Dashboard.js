@@ -37,7 +37,7 @@ const Dashboard = ({ history }) => {
     if (search) {
       data = `${data}&search=${search}`;
     }
-    axios.get(`http://localhost:2000/get-product${data}`, {
+    axios.get(`https://projeto-backend-fg78.onrender.com/get-product${data}`, {
       headers: { 'token': token }
     })
       .then(res => {
@@ -58,7 +58,7 @@ const Dashboard = ({ history }) => {
   };
 
   const deleteProduct = (id) => {
-    axios.post('http://localhost:2000/delete-product', { id }, {
+    axios.post('https://projeto-backend-fg78.onrender.com/delete-product', { id }, {
       headers: { 'token': token }
     })
       .then(res => {
@@ -112,7 +112,7 @@ const Dashboard = ({ history }) => {
     formData.append('discount', discount);
     formData.append('price', price);
 
-    axios.post('http://localhost:2000/add-product', formData, {
+    axios.post('https://projeto-backend-fg78.onrender.com/add-product', formData, {
       headers: { 'content-type': 'multipart/form-data', 'token': token }
     })
       .then(res => {
@@ -145,7 +145,7 @@ const Dashboard = ({ history }) => {
     formData.append('discount', discount);
     formData.append('price', price);
 
-    axios.post('http://localhost:2000/update-product', formData, {
+    axios.post('https://projeto-backend-fg78.onrender.com/update-product', formData, {
       headers: { 'content-type': 'multipart/form-data', 'token': token }
     })
       .then(res => {

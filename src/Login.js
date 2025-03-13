@@ -14,7 +14,7 @@ const Login = ({ history }) => {
   };
 
   const login = () => {
-    axios.post('http://localhost:2000/login', {
+    axios.post('https://projeto-backend-fg78.onrender.com/login', {
       username,
       password,
     }).then((res) => {

@@ -1,0 +1,30 @@
+
+.cardd {
+   
+  border-radius: 5%;
+  background-color: lightsteelblue;
+  text-align: center;
+  box-shadow: 0 6px 5px rgb(130, 23, 192);
+  margin-top: auto;
+  margin-left: 5px;
+  margin-right: auto;
+  padding-top:10px;
+  padding-right: auto;
+  padding-left: auto;
+  margin: 5px;
+  
+}
+.cardd img {
+  width: 50%;
+  border-radius: 25%;
+  margin: center;
+ 
+}
+.cardd .card-title {
+ 
+  margin-top: auto;
+  margin-left: auto;
+  margin-right: auto;
+  font-size: 0.9em;
+  font-weight:Bold;
+}

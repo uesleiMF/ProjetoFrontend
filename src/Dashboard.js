@@ -1,263 +1,518 @@
-import React, { useState, useEffect } from 'react';
-import { Button, TextField, Dialog, DialogActions, LinearProgress, DialogTitle, DialogContent, TableBody, Table, TableContainer, TableHead, TableRow, TableCell } from '@material-ui/core';
+import React, { Component } from 'react';
+import {
+  Button, TextField, Dialog, DialogActions,
+  DialogTitle, DialogContent, TableBody, Table,
+  TableContainer, TableHead, TableRow, TableCell,CircularProgress,
+} from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import swal from 'sweetalert';
-import axios from 'axios';
+const axios = require('axios');
+export default class Dashboard extends Component {
+  constructor() {
+    super();
+    this.state = {
+      token: false,
+      openCasalModal: false,
+      openCasalEditModal: false,
+      id: '',
+      name: '',
+      desc: '',
+      tel:'',
+      niverH: '',
+      niverM: '',
+      file: '',
+      fileName: '',
+      page: 1,
+      search: '',
+      casais: [],
+      pages: 0,
+      loading: false
+    };
+  }
 
-const Dashboard = ({ history }) => {
-  const [token, setToken] = useState('');
-  const [openProductModal, setOpenProductModal] = useState(false);
-  const [openProductEditModal, setOpenProductEditModal] = useState(false);
-  const [id, setId] = useState('');
-  const [name, setName] = useState('');
-  const [desc, setDesc] = useState('');
-  const [price, setPrice] = useState('');
-  const [discount, setDiscount] = useState('');
-  const [file, setFile] = useState(null);
-  const [fileName, setFileName] = useState('');
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState('');
-  const [products, setProducts] = useState([]);
-  const [pages, setPages] = useState(0);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
+  componentDidMount = () => {
+    let token = localStorage.getItem('token');
     if (!token) {
-      history.push('/login');
+      this.props.history.push('/login');
     } else {
-      setToken(token);
-      getProduct();
+      this.setState({ token: token }, () => {
+        this.getCasal();
+      });
     }
-  }, []);
+  }
 
-  const getProduct = () => {
-    setLoading(true);
-    let data = `?page=${page}`;
-    if (search) {
-      data = `${data}&search=${search}`;
+  getCasal = () => {
+    
+    this.setState({ loading: true });
+
+    let data = '?';
+    data = `${data}page=${this.state.page}`;
+    if (this.state.search) {
+      data = `${data}&search=${this.state.search}`;
     }
-    axios.get(`https://projeto-backend-fg78.onrender.com/get-product${data}`, {
-      headers: { 'token': token }
-    })
-      .then(res => {
-        setLoading(false);
-        setProducts(res.data.products);
-        setPages(res.data.pages);
-      })
-      .catch(err => {
-        swal({
-          text: err.response?.data?.errorMessage || 'An error occurred',
-          icon: "error",
-          type: "error"
-        });
-        setLoading(false);
-        setProducts([]);
-        setPages(0);
+    axios.get(`http://localhost:2000/get-casal${data}`, {
+      headers: {
+        'token': this.state.token
+      }
+    }).then((res) => {
+      this.setState({ loading: false, casais: res.data.casais, pages: res.data.pages });
+    }).catch((err) => {
+      swal({
+        text: err.response.data.errorMessage,
+        icon: "error",
+        type: "error"
       });
-  };
+      this.setState({ loading: false, casais: [], pages: 0 },()=>{});
+    });
+  }
 
-  const deleteProduct = (id) => {
-    axios.post('https://projeto-backend-fg78.onrender.com/delete-product', { id }, {
-      headers: { 'token': token }
-    })
-      .then(res => {
-        swal({
-          text: res.data.title,
-          icon: "success",
-          type: "success"
-        });
-        setPage(1);
-        getProduct();
-      })
-      .catch(err => {
-        swal({
-          text: err.response?.data?.errorMessage || 'An error occurred',
-          icon: "error",
-          type: "error"
-        });
+  deleteCasal = (id) => {
+    axios.post('http://localhost:2000/delete-casal', {
+      id: id
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'token': this.state.token
+      }
+    }).then((res) => {
+
+      swal({
+        text: res.data.title,
+        icon: "success",
+        type: "success"
       });
+
+      this.setState({ page: 1 }, () => {
+        this.pageChange(null, 1);
+      });
+    }).catch((err) => {
+      swal({
+        text: err.response.data.errorMessage,
+        icon: "error",
+        type: "error"
+      });
+    });
+  }
+
+  pageChange = (e, page) => {
+    this.setState({ page: page }, () => {
+      this.getCasal();
+    });
+  }
+
+  logOut = () => {
+    localStorage.setItem('token', null);
+    this.props.history.push('/');
+  }
+
+  onChange = (e) => {
+    if (e.target.files && e.target.files[0] && e.target.files[0].name) {
+      this.setState({ fileName: e.target.files[0].name }, () => { });
+    }
+    this.setState({ [e.target.name]: e.target.value }, () => { });
+    if (e.target.name === 'search') {
+      this.setState({ page: 1 }, () => {
+        this.getCasal();
+      });
+    }
   };
 
-  const handleProductOpen = () => {
-    setOpenProductModal(true);
-    setId('');
-    setName('');
-    setDesc('');
-    setPrice('');
-    setDiscount('');
-    setFileName('');
-  };
-
-  const handleProductClose = () => setOpenProductModal(false);
-
-  const handleProductEditOpen = (data) => {
-    setOpenProductEditModal(true);
-    setId(data._id);
-    setName(data.name);
-    setDesc(data.desc);
-    setPrice(data.price);
-    setDiscount(data.discount);
-    setFileName(data.image);
-  };
-
-  const handleProductEditClose = () => setOpenProductEditModal(false);
-
-  const addProduct = () => {
+  addCasal = () => {
     const fileInput = document.querySelector("#fileInput");
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    formData.append('name', name);
-    formData.append('desc', desc);
-    formData.append('discount', discount);
-    formData.append('price', price);
+    const file = new FormData();
+    file.append('file', fileInput.files[0]);
+    file.append('name', this.state.name);
+    file.append('desc', this.state.desc);
+    file.append('tel', this.state.tel);
+    file.append('niverH', this.state.niverH);
+    file.append('niverM', this.state.niverM);
 
-    axios.post('https://projeto-backend-fg78.onrender.com/add-product', formData, {
-      headers: { 'content-type': 'multipart/form-data', 'token': token }
-    })
-      .then(res => {
-        swal({ text: res.data.title, icon: "success", type: "success" });
-        handleProductClose();
-        setName('');
-        setDesc('');
-        setDiscount('');
-        setPrice('');
-        setFile(null);
-        getProduct();
-      })
-      .catch(err => {
-        swal({
-          text: err.response?.data?.errorMessage || 'An error occurred',
-          icon: "error",
-          type: "error"
-        });
-        handleProductClose();
+    axios.post('http://localhost:2000/add-casal', file, {
+      headers: {
+        'content-type': 'multipart/form-data',
+        'token': this.state.token
+      }
+    }).then((res) => {
+
+      swal({
+        text: res.data.title,
+        icon: "success",
+        type: "success"
       });
-  };
 
-  const updateProduct = () => {
+      this.handleCasalClose();
+      this.setState({ name: '', desc: '',  tel: '', niverH: '', niverM: '',  file: null, page: 1 }, () => {
+        this.getCasal();
+      });
+    }).catch((err) => {
+      swal({
+        text: err.response.data.errorMessage,
+        icon: "error",
+        type: "error"
+      });
+      this.handleCasalClose();
+    });
+
+  }
+
+  updateCasal = () => {
     const fileInput = document.querySelector("#fileInput");
-    const formData = new FormData();
-    formData.append('id', id);
-    formData.append('file', fileInput.files[0]);
-    formData.append('name', name);
-    formData.append('desc', desc);
-    formData.append('discount', discount);
-    formData.append('price', price);
+    const file = new FormData();
+    file.append('id', this.state.id);
+    file.append('file', fileInput.files[0]);
+    file.append('name', this.state.name);
+    file.append('desc', this.state.desc);
+    file.append('tel', this.state.tel);
+    file.append('niverH', this.state.niverH);
+    file.append('niverM', this.state.niverM);
+   
+   
 
-    axios.post('https://projeto-backend-fg78.onrender.com/update-product', formData, {
-      headers: { 'content-type': 'multipart/form-data', 'token': token }
-    })
-      .then(res => {
-        swal({ text: res.data.title, icon: "success", type: "success" });
-        handleProductEditClose();
-        setName('');
-        setDesc('');
-        setDiscount('');
-        setPrice('');
-        setFile(null);
-        getProduct();
-      })
-      .catch(err => {
-        swal({
-          text: err.response?.data?.errorMessage || 'An error occurred',
-          icon: "error",
-          type: "error"
-        });
-        handleProductEditClose();
+
+    axios.post('http://localhost:2000/update-casal', file, {
+      headers: {
+        'content-type': 'multipart/form-data',
+        'token': this.state.token
+      }
+    }).then((res) => {
+
+      swal({
+        text: res.data.title,
+        icon: "success",
+        type: "success"
       });
+
+      this.handleCasaltEditClose();
+      this.setState({ name: '', desc: '',tel:'', niverH: '', niverM: '',  file: null }, () => {
+        this.getCasal();
+      });
+    }).catch((err) => {
+      swal({
+        text: err.response.data.errorMessage,
+        icon: "error",
+        type: "error"
+      });
+      this.handleCasaltEditClose();
+    });
+
+  }
+
+  handleCasalOpen = () => {
+    this.setState({
+      openCasalModal: true,
+      id: '',
+      name: '',
+      desc: '',
+      tel:'',
+      niverH: '',
+      niverM: '',
+      fileName: ''
+    });
   };
 
-  const pageChange = (e, value) => {
-    setPage(value);
-    getProduct();
+  handleCasalClose = () => {
+    this.setState({ openCasalModal: false });
   };
 
-  const logOut = () => {
-    localStorage.removeItem('token');
-    history.push('/');
+  handleCasalEditOpen = (data) => {
+    this.setState({
+      openCasalEditModal: true,
+      id: data._id,
+      name: data.name,
+      desc: data.desc,
+      tel: data.tel,
+      niverH: data.niverH,
+      niverM: data.niverM,
+     
+      fileName: data.image
+    });
   };
 
-  return (
-    <div>
-      {loading && <LinearProgress />}
-      <h2>Dashboard</h2>
-      <Button variant="contained" color="primary" onClick={handleProductOpen}>Add Product</Button>
-      <Button variant="contained" onClick={logOut}>Log Out</Button>
-      
-      {/* Add Product Modal */}
-      <Dialog open={openProductModal} onClose={handleProductClose}>
-        <DialogTitle>Add Product</DialogTitle>
-        <DialogContent>
-          <TextField label="Product Name" value={name} onChange={(e) => setName(e.target.value)} required />
-          <TextField label="Description" value={desc} onChange={(e) => setDesc(e.target.value)} required />
-          <TextField label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
-          <TextField label="Discount" type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} required />
-          <Button variant="contained" component="label">
-            Upload
-            <input id="fileInput" type="file" hidden onChange={(e) => setFile(e.target.files[0])} />
+  handleCasaltEditClose = () => {
+    this.setState({ openCasalEditModal: false });
+  };
+
+  render() {
+    return (
+      <div>
+        {this.state.loading && <CircularProgress color="inherit" />}
+        <div>
+          <h2>CELULAS DE  CASAIS</h2>
+          <Button
+            className="button_style"
+            variant="contained"
+            color="primary"
+            size="small"
+            onClick={this.handleCasalOpen}
+          >
+            Adicionar Casais
           </Button>
-          {fileName && <p>{fileName}</p>}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleProductClose}>Cancel</Button>
-          <Button disabled={!name || !desc || !price || !discount || !file} onClick={addProduct}>Add Product</Button>
-        </DialogActions>
-      </Dialog>
-      
-      {/* Edit Product Modal */}
-      <Dialog open={openProductEditModal} onClose={handleProductEditClose}>
-        <DialogTitle>Edit Product</DialogTitle>
-        <DialogContent>
-          <TextField label="Product Name" value={name} onChange={(e) => setName(e.target.value)} required />
-          <TextField label="Description" value={desc} onChange={(e) => setDesc(e.target.value)} required />
-          <TextField label="Price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} required />
-          <TextField label="Discount" type="number" value={discount} onChange={(e) => setDiscount(e.target.value)} required />
-          <Button variant="contained" component="label">
-            Upload
-            <input id="fileInput" type="file" hidden onChange={(e) => setFile(e.target.files[0])} />
+          <Button
+            className="button_style"
+            variant="contained"
+            size="small"
+            onClick={this.logOut}
+          >
+            Sair
           </Button>
-          {fileName && <p>{fileName}</p>}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleProductEditClose}>Cancel</Button>
-          <Button disabled={!name || !desc || !price || !discount} onClick={updateProduct}>Save</Button>
-        </DialogActions>
-      </Dialog>
+        </div>
 
-      {/* Product Table */}
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Discount</TableCell>
-              <TableCell>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {products.map(product => (
-              <TableRow key={product._id}>
-                <TableCell>{product.name}</TableCell>
-                <TableCell>{product.desc}</TableCell>
-                <TableCell>{product.price}</TableCell>
-                <TableCell>{product.discount}</TableCell>
-                <TableCell>
-                  <Button onClick={() => handleProductEditOpen(product)}>Edit</Button>
-                  <Button onClick={() => deleteProduct(product._id)}>Delete</Button>
-                </TableCell>
+        {/* Edit Casais */}
+        <Dialog
+          open={this.state.openCasalEditModal}
+          onClose={this.handleCasalClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Editar Casais</DialogTitle>
+          <DialogContent>
+            <TextField
+              id="standard-basic"
+              type="text"
+              autoComplete="off"
+              name="name"
+              value={this.state.name}
+              onChange={this.onChange}
+              placeholder="Nome Casal"
+              required
+            /><br />
+            <TextField
+              id="standard-basic"
+              type="text"
+              autoComplete="off"
+              name="desc"
+              value={this.state.desc}
+              onChange={this.onChange}
+              placeholder="Descrição"
+              required
+            /><br />
+              <TextField
+              id="standard-basic"
+              type="number"
+              autoComplete="off"
+              name="tel"
+              value={this.state.tel}
+              onChange={this.onChange}
+              placeholder="Contato"
+              required
+            /><br />
+            <TextField
+              id="standard-basic"
+              type="date"
+              dateformat="MM/DD/YYYY"
+              autoComplete="off"
+              name="niverH"
+              value={this.state.niverH}
+              onChange={this.onChange}
+              placeholder="Aniversario Homem"
+              required
+            /><br />
+            <TextField
+              id="standard-basic"
+              type="date"
+              dateformat="MM/DD/YYYY"
+              autoComplete="off"
+              name="niverM"
+              value={this.state.niverM}
+              onChange={this.onChange}
+              placeholder="Aniversario Mulher"
+              required
+            /><br /><br />
+            <Button
+              variant="contained"
+              component="label"
+            > Upload
+            <input
+                idd="standard-basic"
+                type="file"
+                accept="image/*"
+                name="file"
+                value={this.state.file}
+                onChange={this.onChange}
+                id="fileInput"
+                placeholder="File"
+                hidden
+              />
+            </Button>&nbsp;
+            {this.state.fileName}
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={this.handleCasaltEditClose} color="primary">
+              Cancelar
+            </Button>
+            <Button
+              disabled={this.state.name === '' || this.state.desc === '' || this.state.tel===''|| this.state.niverH === '' || this.state.niverM === '' }
+              onClick={(e) => this.updateCasal()} color="primary" autoFocus>
+              Editar Casais
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* Add Casais */}
+        <Dialog
+          open={this.state.openCasalModal}
+          onClose={this.handleCasalClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">Adicionar Casais</DialogTitle>
+          <DialogContent>
+            <TextField
+              id="standard-basic"
+              type="text"
+              autoComplete="off"
+              name="name"
+              value={this.state.name}
+              onChange={this.onChange}
+              placeholder="Nome Casais"
+              required
+            /><br />
+            <TextField
+              id="standard-basic"
+              type="text"
+              autoComplete="off"
+              name="desc"
+              value={this.state.desc}
+              onChange={this.onChange}
+              placeholder="Descrição"
+              required
+            /><br />
+              <TextField
+              id="standard-basic"
+              type="number"
+              autoComplete="off"
+              name="tel"
+              value={this.state.tel}
+              onChange={this.onChange}
+              placeholder="Contato"
+              required
+            /><br />
+
+            <TextField
+              id="standard-basic"
+              type="date"
+              dateformat="MM/DD/YYYY"
+              autoComplete="off"
+              name="niverH"
+              value={this.state.niverH}
+              onChange={this.onChange}
+              placeholder="Anirvesario Homem"
+              required
+            /><br />
+            <TextField
+              id="standard-basic"
+              type="date"
+              dateformat="MM/DD/YYYY"
+              autoComplete="off"
+              name="niverM"
+              value={this.state.niverM}
+              onChange={this.onChange}
+              placeholder="Aniversario Mulher"
+              required
+            /><br /><br />
+            <Button
+              variant="contained"
+              component="label"
+            > Upload
+            <input
+                idd="standard-basic"
+                type="file"
+                accept="image/*"
+                name="file"
+                value={this.state.file}
+                onChange={this.onChange}
+                id="fileInput"
+                placeholder="File"
+                hidden
+                required
+              />
+            </Button>&nbsp;
+            {this.state.fileName}
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={this.handleCasalClose} color="primary">
+              Cancelar
+            </Button>
+            <Button
+              disabled={this.state.name === '' || this.state.desc === ''|| this.state.tel==='' || this.state.H === '' || this.state.niverM === ''|| this.state.file === null}
+              onClick={(e) => this.addCasal()} color="primary" autoFocus>
+              Adicionar Casais
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        <br />
+
+        <TableContainer>
+          <TextField
+            id="standard-basic"
+            type="search"
+            autoComplete="off"
+            name="search"
+            value={this.state.search}
+            onChange={this.onChange}
+            placeholder="Procurar Casais"
+            required
+          /> 
+          <Table aria-label="simple table">
+            <TableHead>
+              <TableRow>
+              
+                <TableCell align="center">Imagem</TableCell>
+                <TableCell align="center">Nome Casal</TableCell>
+                <TableCell align="center">Descrição</TableCell>
+                <TableCell align="center">Contato</TableCell>
+                <TableCell align="center">Aniversario Homem</TableCell>
+                <TableCell align="center">Aniversario Mulher</TableCell>
+                <TableCell align="center">Ação</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {this.state.casais.map((row) => (
+                <TableRow key={row.name}>
+              
+      
+                 
+                  <TableCell align="center"><img src={`http://localhost:2000/${row.image}`} alt="" width="70" height="70" /></TableCell>
+                  <TableCell align="center">{row.name}</TableCell>
+                  <TableCell align="center">{row.desc}</TableCell>
+                  <TableCell align="center">{row.tel}</TableCell>
+                  <TableCell align="center">{row.niverH}</TableCell>
+                  <TableCell align="center">{row.niverM}</TableCell>
+               
+                  <TableCell align="center">
+                    <Button
+                      className="button_style"
+                      variant="outlined"
+                      color="primary"
+                      size="small"
+                      onClick={(e) => this.handleCasalEditOpen(row)}
+                    >
+                      Editar
+                  </Button>
+                    <Button
+                      className="button_style"
+                      variant="outlined"
+                      color="secondary"
+                      size="small"
+                      
+                      
+                      onClick={(e) => this.deleteCasal(row._id)}
+                    >
+                      Deletar
+                  </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <br />
+          <Pagination count={this.state.pages} page={this.state.page} onChange={this.pageChange} color="primary" />
+        </TableContainer>
 
-      {/* Pagination */}
-      <Pagination count={pages} page={page} onChange={pageChange} />
-    </div>
-  );
-};
-
-export default Dashboard;
+      </div>
+    );
+  }
+}

@@ -1,40 +1,32 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import swal from 'sweetalert';
 import { Button, TextField, Link } from '@material-ui/core';
-import axios from 'axios';
+const axios = require('axios');
 
-const Register = ({ history }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+export default class Register extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      username: '',
+      password: '',
+      confirm_password: ''
+    };
+  }
 
-  const onChange = (e) => {
-    const { name, value } = e.target;
-    if (name === 'username') setUsername(value);
-    if (name === 'password') setPassword(value);
-    if (name === 'confirm_password') setConfirmPassword(value);
-  };
+  onChange = (e) => this.setState({ [e.target.name]: e.target.value });
 
-  const register = () => {
-    if (password !== confirmPassword) {
-      swal({
-        text: "Passwords do not match!",
-        icon: "error",
-        type: "error"
-      });
-      return;
-    }
+  register = () => {
 
-    axios.post('https://projeto-backend-fg78.onrender.com/register', {
-      username,
-      password,
+    axios.post('http://localhost:2000/register', {
+      username: this.state.username,
+      password: this.state.password,
     }).then((res) => {
       swal({
         text: res.data.title,
         icon: "success",
         type: "success"
       });
-      history.push('/');
+      this.props.history.push('/');
     }).catch((err) => {
       swal({
         text: err.response.data.errorMessage,
@@ -42,64 +34,64 @@ const Register = ({ history }) => {
         type: "error"
       });
     });
-  };
+  }
 
-  return (
-    <div style={{ marginTop: '200px' }}>
-      <div>
-        <h2>Register</h2>
+  render() {
+    return (
+      <div style={{ marginTop: '200px' }}>
+        <div>
+          <h2>Cadastrar Usuario</h2>
+        </div>
+
+        <div>
+          <TextField
+            id="standard-basic"
+            type="text"
+            autoComplete="off"
+            name="username"
+            value={this.state.username}
+            onChange={this.onChange}
+            placeholder="Usuario"
+            required
+          />
+          <br /><br />
+          <TextField
+            id="standard-basic"
+            type="password"
+            autoComplete="off"
+            name="password"
+            value={this.state.password}
+            onChange={this.onChange}
+            placeholder="Senha"
+            required
+          />
+          <br /><br />
+         {/* <TextField
+            id="standard-basic"
+            type="password"
+            autoComplete="off"
+            name="confirm_password"
+            value={this.state.confirm_password}
+            onChange={this.onChange}
+            placeholder="Confirm Password"
+            required
+    />*/}
+          <br /><br />
+          <Button
+            className="button_style"
+            variant="contained"
+            color="primary"
+            size="small"
+            disabled={this.state.username === '' && this.state.password === ''}
+            onClick={this.register}
+          >
+            Registro
+          </Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <Link href="/">
+            Login
+          </Link>
+        </div>
       </div>
-
-      <div>
-        <TextField
-          id="username"
-          type="text"
-          autoComplete="off"
-          name="username"
-          value={username}
-          onChange={onChange}
-          placeholder="User Name"
-          required
-        />
-        <br /><br />
-        <TextField
-          id="password"
-          type="password"
-          autoComplete="off"
-          name="password"
-          value={password}
-          onChange={onChange}
-          placeholder="Password"
-          required
-        />
-        <br /><br />
-        <TextField
-          id="confirm_password"
-          type="password"
-          autoComplete="off"
-          name="confirm_password"
-          value={confirmPassword}
-          onChange={onChange}
-          placeholder="Confirm Password"
-          required
-        />
-        <br /><br />
-        <Button
-          className="button_style"
-          variant="contained"
-          color="primary"
-          size="small"
-          disabled={username === '' || password === '' || confirmPassword === '' || password !== confirmPassword}
-          onClick={register}
-        >
-          Register
-        </Button> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <Link href="/">
-          Login
-        </Link>
-      </div>
-    </div>
-  );
-};
-
-export default Register;
+    );
+  }
+}

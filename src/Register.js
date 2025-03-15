@@ -17,7 +17,7 @@ export default class Register extends Component {
 
   register = () => {
 
-    axios.post('http://localhost:2000/register', {
+    axios.post('https://projeto-backend-fg78.onrender.com/register', {
       username: this.state.username,
       password: this.state.password,
     }).then((res) => {

@@ -50,7 +50,7 @@ export default class Dashboard extends Component {
     if (this.state.search) {
       data = `${data}&search=${this.state.search}`;
     }
-    axios.get(`http://localhost:2000/get-casal${data}`, {
+    axios.get(`https://projeto-backend-fg78.onrender.com/get-casal${data}`, {
       headers: {
         'token': this.state.token
       }
@@ -67,7 +67,7 @@ export default class Dashboard extends Component {
   }
 
   deleteCasal = (id) => {
-    axios.post('http://localhost:2000/delete-casal', {
+    axios.post('https://projeto-backend-fg78.onrender.com/delete-casal', {
       id: id
     }, {
       headers: {
@@ -127,7 +127,7 @@ export default class Dashboard extends Component {
     file.append('niverH', this.state.niverH);
     file.append('niverM', this.state.niverM);
 
-    axios.post('http://localhost:2000/add-casal', file, {
+    axios.post('https://projeto-backend-fg78.onrender.com/add-casal', file, {
       headers: {
         'content-type': 'multipart/form-data',
         'token': this.state.token
@@ -169,7 +169,7 @@ export default class Dashboard extends Component {
    
 
 
-    axios.post('http://localhost:2000/update-casal', file, {
+    axios.post('https://projeto-backend-fg78.onrender.com/update-casal', file, {
       headers: {
         'content-type': 'multipart/form-data',
         'token': this.state.token
@@ -475,7 +475,7 @@ export default class Dashboard extends Component {
               
       
                  
-                  <TableCell align="center"><img src={`http://localhost:2000/${row.image}`} alt="" width="70" height="70" /></TableCell>
+                  <TableCell align="center"><img src={`https://projeto-backend-fg78.onrender.com/${row.image}`} alt="" width="70" height="70" /></TableCell>
                   <TableCell align="center">{row.name}</TableCell>
                   <TableCell align="center">{row.desc}</TableCell>
                   <TableCell align="center">{row.tel}</TableCell>

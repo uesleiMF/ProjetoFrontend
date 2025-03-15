@@ -16,7 +16,7 @@ export default class Login extends Component {
 
   login = () => {
     // Enviar a senha original sem criptografá-la
-    axios.post('http://localhost:2000/login', {
+    axios.post('https://projeto-backend-fg78.onrender.com/login', {
       username: this.state.username,
       password: this.state.password, // Enviar a senha sem hash
     }).then((res) => {
